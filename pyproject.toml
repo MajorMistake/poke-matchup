@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "poke-matchup"
+version = "0.1.0"
+description = "Competitive Pokemon Matchup Checker"
+authors = ["Jackson McKissack"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+reflex = "^0.5.1"
+jsonpickle = "^3.0.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
