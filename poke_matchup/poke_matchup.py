@@ -5,6 +5,8 @@ import reflex as rx
 
 from typing import List
 
+# State
+
 class Stats(rx.Base):
     stat_name: str
     value: int
@@ -103,7 +105,6 @@ class State(rx.State):
 
 
 #Components
-componets = ["nav_bar", "display_pokemon", "display_team", "left_team_compare", "right_team_compare"]
 def nav_bar() -> rx.hstack:
     return rx.hstack(
     rx.hstack(
@@ -120,7 +121,7 @@ def nav_bar() -> rx.hstack:
             rx.menu.item(rx.link("Compare", href="comparison")),
             rx.menu.item(rx.link("Detail", href="detail")),
             rx.menu.item(rx.link("About", href="about")),
-            width="10rem",
+            width="10em",
         ),
     ),
     top="0px",
@@ -129,26 +130,47 @@ def nav_bar() -> rx.hstack:
     width="100%",
 )
 
-def poke_card(pokemon: Pokemon) -> rx.card:
+def poke_card(pokemon: Pokemon) -> rx.Component:
     return rx.card(
         rx.heading(pokemon.pokemon_name)
     )
 
-def poke_list(team: Team) -> rx.flex:
+def poke_list(team: Team) -> rx.Component:
     return rx.flex(
-        rx.foreach(team.members, poke_card)
+        rx.foreach(team.members, poke_card),
+        wrap="wrap",
+        spacing="2",
+        padding=".25em"
     )
 
-def team_card(team: Team) -> rx.card:
-    return rx.card(
-        rx.heading(team.team_name),
-        poke_list(team=team)
+def team_card(team: Team) -> rx.Component:
+    return rx.context_menu.root(
+        rx.context_menu.trigger(
+            rx.card(
+                rx.heading(team.team_name),
+                poke_list(team=team),
+            ),
+        ),
+        rx.context_menu.content(
+            rx.context_menu.item("Copy"),
+            rx.context_menu.item("Compare"),
+            rx.context_menu.item("Edit"),
+            rx.context_menu.separator(),
+            rx.context_menu.item("Delete", color="red"),
+        ),
     )
 
-def team_list() -> rx.flex:
+def team_list() -> rx.Component:
     return rx.flex(
         rx.foreach(State.teamsObj, team_card),
-        direction="column"
+        rx.spacer(),
+        rx.button(
+            "Create Team", type="submit",
+            on_click=State.cache_team(Team.create_team(name="Big Bois", members=[Pokemon.create_poke("snorlax")]))),
+        direction="column",
+        spacing="3",
+        min_width="10em",
+        padding="1em"
     )
 
 #Routes
@@ -159,10 +181,11 @@ def index() -> rx.Component:
     return rx.fragment(
         rx.vstack(
             nav_bar(),
-            team_list(),
-            rx.button(
-                "Create Team", type="submit",
-                on_click=State.cache_team(Team.create_team(name="Big Bois", members=[Pokemon.create_poke("snorlax")]))),
+            rx.box(
+                team_list(),
+                margin="auto",
+                width="50%"
+            ),
             spacing="5",
             min_height="85vh",
         ),
@@ -187,7 +210,7 @@ def comparison() -> rx.Component:
 def about() -> rx.Component:
     return rx.fragment(
         nav_bar(),
-        "About",
+        "About"
     )
 
 
