@@ -1,25 +1,12 @@
 import requests, json
 
-name = "charizard"
-pokemon = {}
-r = requests.get(f"https://pokeapi.co/api/v2/pokemon/{name}")
-pokeRaw = json.loads(r.text)
+entry: str = "pi"
 
-#pokeTypes = pokeRaw["types"]
-#print("types: ", pokeTypes)
+r = requests.get(f"https://pokeapi.co/api/v2/pokemon?limit=10000")
 
-pokeStats = pokeRaw["stats"] 
-stats = [] 
-for item in pokeStats: 
-    statObj = {} 
-    statObj["name"] = item["stat"]["name"] 
-    statObj["value"] = item["base_stat"] 
-    stats.append(statObj) 
-pokemon["stats"] = stats 
-print(stats)
+data = json.loads(r.text)
+possible_names = [pokemon["name"] for pokemon in data["results"]]
 
-#pokeAbilities = pokeRaw["abilities"] 
-#print("abilities: ", pokeAbilities)
+result = [name for name in possible_names if entry.lower() in name.lower()]
 
-#pokeMoves = pokeRaw["moves"] 
-#print("moves: ", pokeMoves)
+print(result)
